@@ -149,17 +149,14 @@ void process_command(GCode *com)
   unsigned long codenum; //throw away variable
   static GCode lastCom;
 
-  // since CNC gcode generators often only transmit changes in coordinates for moves we
-  // have to remember the last G command together with E and F if only X,Y,Z, are transmitted
-  if(!GCODE_HAS_NO_XYZ(com))
+  // since CNC gcode generators often only transmit changes in coordinates for moves (GXX) we
+  // have to remember the last G command (hopefully if only X is transmitted only X will move... otherwise I have to
+  // to add to remember the rest too)
+  if(!GCODE_HAS_M(com))//only use old GXX if no M code was used
   {
 	  if(!GCODE_HAS_G(com)){
 		  com->G = lastCom.G;
 		  com->params |= 4;
-	  }
-	  if(!GCODE_HAS_F(com)){
-		  com->F= lastCom.F;
-		  com->params |= 256;
 	  }
   }
 
