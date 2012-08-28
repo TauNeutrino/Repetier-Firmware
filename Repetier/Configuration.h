@@ -30,7 +30,7 @@
 // Gen7 1.1 and above = 7
 // Teensylu (at90usb) = 8 // requires Teensyduino
 // Printrboard (at90usb) = 9 // requires Teensyduino
-#define MOTHERBOARD 5
+#define MOTHERBOARD 3
 #include <avr/io.h>
 #include "pins.h"
 
@@ -782,8 +782,8 @@ to activate the quadratic term. Only adds lots of computations and storage usage
  Overridden if EEPROM activated.
 */
 //#define BAUDRATE 76800
-//#define BAUDRATE 57600
-#define BAUDRATE 250000
+#define BAUDRATE 57600
+//#define BAUDRATE 250000
 /** \brief Size in byte of the output buffer */
 #define OUTPUT_BUFFER_SIZE 64
 /** \brief Activates buffered output.
@@ -845,7 +845,7 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in configuration.h are not set any more, as they are 
            taken from the EEPROM.
 */
-#define EEPROM_MODE 1
+#define EEPROM_MODE 0
 /** Comment out (using // at the start of the line) to disable SD support: */
 //#define SDSUPPORT 0
 /** Show extended directory including file length. Don't use this with pronterface! */

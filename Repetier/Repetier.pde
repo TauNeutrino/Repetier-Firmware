@@ -180,7 +180,7 @@ byte STEP_PIN[3] = {X_STEP_PIN, Y_STEP_PIN, Z_STEP_PIN};
 PrinterState printer_state;
 byte relative_mode = false;  ///< Determines absolute (false) or relative Coordinates (true).
 byte relative_mode_e = false;  ///< Determines Absolute or Relative E Codes while in Absolute Coordinates mode. E is always relative in Relative Coordinates mode.
-byte debug_level = 6; ///< Bitfield defining debug output. 1 = echo, 2 = info, 4 = error, 8 = dry run., 16 = Only communication, 32 = No moves
+byte debug_level = 7; //default=6 ///< Bitfield defining debug output. 1 = echo, 2 = info, 4 = error, 8 = dry run., 16 = Only communication, 32 = No moves
 
 //Inactivity shutdown variables
 unsigned long previous_millis_cmd = 0;

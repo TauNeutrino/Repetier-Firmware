@@ -559,6 +559,8 @@ bool gcode_parse_binary(GCode *code,byte *buffer) {
    if(code->params & 512) {code->T=*p++;}
    if(code->params & 1024) {code->S=*(long int*)p;p+=4;}
    if(code->params & 2048) {code->P=*(long int*)p;p+=4;}
+   if(code->params & 4096) {code->I=*(long int*)p;p+=4;}
+   if(code->params & 8192) {code->J=*(long int*)p;p+=4;}
    if(GCODE_HAS_STRING(code)) { // read 16 byte into string
      char *sp = code->text;
      for(i=0;i<16;++i) *sp++ = *p++;
@@ -621,6 +623,14 @@ bool gcode_parse_ascii(GCode *code,char *line) {
      code->P = gcode_value_long(++pos);
      code->params |= 2048;
   }
+  if((pos = strchr(line,'I'))!=0) {
+     code->I = gcode_value(++pos);
+     code->params |= 4096;
+  }
+  if((pos = strchr(line,'J'))!=0) {
+     code->J = gcode_value(++pos);
+     code->params |= 8192;
+  }
   if(GCODE_HAS_M(code) && (code->M == 23 || code->M == 28 || code->M == 29 || code->M == 30 || code->M == 117)) {
      // after M command we got a filename for sd card management
      char *sp = line;
@@ -674,6 +684,12 @@ void gcode_print_command(GCode *code) {
   }
   if(GCODE_HAS_Z(code)) {
     out.print_float_P(PSTR(" Z"),code->Z);
+  }
+  if(GCODE_HAS_I(code)) {
+    out.print_float_P(PSTR(" I"),code->I);
+  }
+  if(GCODE_HAS_J(code)) {
+    out.print_float_P(PSTR(" J"),code->J);
   }
   if(GCODE_HAS_E(code)) {
     out.print_float_P(PSTR(" E"),code->E,4);

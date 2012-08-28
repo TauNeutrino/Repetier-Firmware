@@ -147,6 +147,25 @@ void home_axis(bool xaxis,bool yaxis,bool zaxis) {
 void process_command(GCode *com)
 {
   unsigned long codenum; //throw away variable
+  static GCode lastCom;
+
+  // since CNC gcode generators often only transmit changes in coordinates for moves we
+  // have to remember the last G command together with E and F if only X,Y,Z, are transmitted
+  if(!GCODE_HAS_NO_XYZ(com))
+  {
+	  if(!GCODE_HAS_G(com)){
+		  com->G = lastCom.G;
+		  com->params |= 4;
+	  }
+	  if(!GCODE_HAS_F(com)){
+		  com->F= lastCom.F;
+		  com->params |= 256;
+	  }
+  }
+
+
+
+
 #ifdef INCLUDE_DEBUG_COMMUNICATION
   if(DEBUG_COMMUNICATION) {
     if(GCODE_HAS_G(com) || (GCODE_HAS_M(com) && com->M!=111)) {
@@ -165,6 +184,57 @@ void process_command(GCode *com)
         if(get_coordinates(com)) // For X Y Z E F
           queue_move(ALWAYS_CHECK_ENDSTOPS,true);
         break;
+      case 2: // clockwise arc move
+      case 3: // counterclockwise arc move
+     	  if(GCODE_HAS_I(com) || GCODE_HAS_J(com)) // check if we have all parameters I or J is sufficient
+     	  {
+     		  if(com->I == 0 && com->J == 0)  //I && J = always relative circle center -> we do not do infinite small circles
+     		  {
+     			  out.print_P(PSTR("Err: Arc /w zero radius!"));
+     			  break;
+     		  }
+
+     		  float angleA, angleB, angle, radius, length, aX, aY, bX, bY,divZ;
+ 				divZ=com->Z-lastCom.Z;
+ 				aX = -(com->I);
+ 				aY = -(com->J);
+ 				bX = (com->X - com->I);
+ 				bY = (com->Y - com->J);
+
+ 				if (com->G == 2) { // Clockwise
+ 					angleA = atan2(bY, bX);
+ 					angleB = atan2(aY, aX);
+ 				} else { // Counterclockwise
+ 					angleA = atan2(aY, aX);
+ 					angleB = atan2(bY, bX);
+ 				}
+
+ 				// Make sure angleB is always greater than angleA
+ 				// and if not add 2PI so that it is (this also takes
+ 				// care of the special case of angleA == angleB,
+ 				// ie. we want a complete circle)
+ 				if (angleB <= angleA) angleB += 2 * PI;
+ 				angle = angleB - angleA;
+
+ 				radius = sqrt(aX * aX + aY * aY);
+ 				length = radius * angle;
+ 				int circleSegments, s, step;
+ 				circleSegments = (int) ceil(length/(sqrt(length)/(angle*2.864788/*rough 18/pi*/))); //this gives good quality circles with all sizes but restricting segment count
+ 				//FloatPoint circlePoint;
+ 				//circlePoint.z = where_i_am.z;
+ 				//circlePoint.e = fp.e;
+ 				//circlePoint.f = fp.f;
+
+ 				for (s = 1; s <= circleSegments; s++) {
+ 					step = (com->G == 3) ? s : circleSegments - s; // Work backwards for CW
+ 					lastCom.X = com->I + radius * cos(angleA + angle * ((float) step / circleSegments));
+ 					lastCom.Y = com->J + radius * sin(angleA + angle * ((float) step / circleSegments));
+ 					lastCom.Z +=(divZ/(float)circleSegments);
+ 					if(get_coordinates(&lastCom)) // For X Y Z F
+ 					          queue_move(ALWAYS_CHECK_ENDSTOPS,true);
+ 				}
+ 			}
+     	  break;
       case 4: // G4 dwell
         wait_until_end_of_move();
         codenum = 0;
@@ -632,6 +702,23 @@ void process_command(GCode *com)
       out.println();
   }
 #endif
+
+  if(GCODE_HAS_E(com)) lastCom.E=com->E;
+  if(GCODE_HAS_F(com)) lastCom.F=com->F;
+  if(GCODE_HAS_G(com)) lastCom.G=com->G;
+  if(GCODE_HAS_I(com)) lastCom.I=com->I;
+  if(GCODE_HAS_J(com)) lastCom.J=com->J;
+  if(GCODE_HAS_M(com)) lastCom.M=com->M;
+  if(GCODE_HAS_N(com)) lastCom.N=com->N;
+  if(GCODE_HAS_P(com)) lastCom.P=com->P;
+  if(GCODE_HAS_S(com)) lastCom.S=com->S;
+  if(GCODE_HAS_T(com)) lastCom.T=com->T;
+  if(GCODE_HAS_X(com)) lastCom.X=com->X;
+  if(GCODE_HAS_Y(com)) lastCom.Y=com->Y;
+  if(GCODE_HAS_Z(com)) lastCom.Z=com->Z;
+  if(GCODE_HAS_E(com)) lastCom.params=com->E;
+  strcpy(lastCom.text,com->text);
+
   gcode_command_finished(); // free command cache
 }
 
