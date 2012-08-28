@@ -230,6 +230,9 @@ void process_command(GCode *com)
  					if(get_coordinates(&lastCom)) // For X Y Z F
  					          queue_move(ALWAYS_CHECK_ENDSTOPS,true);
  				}
+ 			}else {
+   			  out.print_P(PSTR("Err: Arc /w missing mandatory parameter I/J"));
+   			  break;
  			}
      	  break;
       case 4: // G4 dwell

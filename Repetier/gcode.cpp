@@ -545,6 +545,7 @@ bool gcode_parse_binary(GCode *code,byte *buffer) {
       }
      return false;
    }
+   // TODO: add G2/G3 parameters -> I and J
    p = buffer;
    code->params = *(unsigned int *)p;p+=2;
    if(code->params & 1) {gcode_actN=code->N=*(unsigned int *)p;p+=2;}
