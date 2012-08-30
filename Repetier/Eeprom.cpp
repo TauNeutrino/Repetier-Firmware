@@ -99,7 +99,8 @@ void epr_update(GCode *com) {
       if(GCODE_HAS_S(com)) epr_set_long(com->P,(long)com->S);
       break;
     case 3:
-      if(GCODE_HAS_X(com)) epr_set_float(com->P,com->X);
+      if(GCODE_HAS_X(com)) epr_set_float(com->
+      P,com->X);
       break;
   }
   epr_eeprom_to_data();

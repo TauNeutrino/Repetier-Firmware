@@ -396,6 +396,8 @@ This function is the main function to read the commands from serial console or f
 It must be called frequently to empty the incoming buffer.
 */
 void gcode_read_serial() {
+  
+  
   GCode *act;
   unsigned long time = millis();
   if(gcode_buflen>=GCODE_BUFFER_SIZE) return; // all buffers full
@@ -406,7 +408,8 @@ void gcode_read_serial() {
       gcode_lastdata = time;
     }
 #ifdef WAITING_IDENTIFIER
-    else if(gcode_buflen == 0 && time-gcode_lastdata>1000) { // Don't do it if buffer is not empty. It may be a slow executing command.
+    else if(gce
+    ode_buflen == 0 && time-gcode_lastdata>1000) { // Don't do it if buffer is not empty. It may be a slow executing command.
       out.println_P(PSTR(WAITING_IDENTIFIER)); // Unblock communication in case the last ok was not received correct.
       gcode_lastdata = time;
     }   

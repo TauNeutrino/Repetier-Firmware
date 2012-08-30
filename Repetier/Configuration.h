@@ -53,9 +53,9 @@
 
 
 /** \brief Number of steps for a 1mm move in x direction. Overridden if EEPROM activated. */
-#define XAXIS_STEPS_PER_MM 40
+#define XAXIS_STEPS_PER_MM 80
 /** \brief Number of steps for a 1mm move in y direction  Overridden if EEPROM activated.*/
-#define YAXIS_STEPS_PER_MM 40
+#define YAXIS_STEPS_PER_MM 80
 /** \brief Number of steps for a 1mm move in z direction  Overridden if EEPROM activated.*/
 #define ZAXIS_STEPS_PER_MM 3360
 
@@ -469,9 +469,9 @@ on this endstop.
 #define ENDSTOP_PULLUP_Z_MAX true
 
 //set to true to invert the logic of the endstops
-#define ENDSTOP_X_MIN_INVERTING false
-#define ENDSTOP_Y_MIN_INVERTING false
-#define ENDSTOP_Z_MIN_INVERTING false
+#define ENDSTOP_X_MIN_INVERTING true
+#define ENDSTOP_Y_MIN_INVERTING true
+#define ENDSTOP_Z_MIN_INVERTING true
 #define ENDSTOP_X_MAX_INVERTING false
 #define ENDSTOP_Y_MAX_INVERTING false
 #define ENDSTOP_Z_MAX_INVERTING false
@@ -487,6 +487,8 @@ on this endstop.
 #define X_ENABLE_ON 0
 #define Y_ENABLE_ON 0
 #define Z_ENABLE_ON 0
+
+
 
 // Disables axis when it's not being used.
 #define DISABLE_X false
@@ -511,16 +513,17 @@ on this endstop.
 #define min_software_endstop_z false
 
 //If true, axis won't move to coordinates greater than the defined lengths below.
-#define max_software_endstop_x true
-#define max_software_endstop_y true
-#define max_software_endstop_z true
+#define max_software_endstop_x false
+#define max_software_endstop_y false
+#define max_software_endstop_z false
+
 
 // If during homing the endstop is reached, ho many mm should the printer move back for the second try
 #define ENDSTOP_X_BACK_MOVE 5
 #define ENDSTOP_Y_BACK_MOVE 5
 #define ENDSTOP_Z_BACK_MOVE 2
 
-// For higher precision you can reduce the speed for the second test on the endstop
+// For higher precision you can reduce the factor for the second test on the endstop
 // during homing operation. The homing speed is divided by the value. 1 = same speed, 2 = half speed
 #define ENDSTOP_X_RETEST_REDUCTION_FACTOR 2
 #define ENDSTOP_Y_RETEST_REDUCTION_FACTOR 2
@@ -821,7 +824,7 @@ execution.
 /** Communication errors can swollow part of the ok, which tells the host software to send
 the next command. Not receiving it will cause your printer to stop. Sending this string every
 second, if our queue is empty should prevent this. Uncomment if you don't wan't this feature. */
-#define WAITING_IDENTIFIER "wait"
+//#define WAITING_IDENTIFIER "wait"
 
 /** \brief Sets time for echo debug
 
@@ -845,7 +848,9 @@ matches, the stored values are used to overwrite the settings.
 IMPORTANT: With mode <>0 some changes in configuration.h are not set any more, as they are 
            taken from the EEPROM.
 */
-#define EEPROM_MODE 0
+#define EEPROM_MODE 1
+
+
 /** Comment out (using // at the start of the line) to disable SD support: */
 //#define SDSUPPORT 0
 /** Show extended directory including file length. Don't use this with pronterface! */
@@ -859,6 +864,7 @@ IMPORTANT: With mode <>0 some changes in configuration.h are not set any more, a
 //#define DEBUG_QUEUE_MOVE
 /** Allows M111 to set bit 5 (16) which disables all commands except M111. This can be used
 to test your data througput or search for communication problems. */
+//
 #define INCLUDE_DEBUG_COMMUNICATION
 /** Allows M111 so set bit 6 (32) which disables moves, at the first tried step. In combination
 with a dry run, you can test the speed of path computations, which are still performed. */
@@ -870,13 +876,15 @@ usage or for seraching for memory induced errors. Switch it off for production, 
 //#define DEBUG_ADVANCE
 /** \brief print ops related debug info. */
 //#define DEBUG_OPS
+
 /** If enabled, writes the created generic table to serial port at startup. */
 //#define DEBUG_GENERIC
 /** If enabled, steps to move and moved steps are compared. */
 //#define DEBUG_STEPCOUNT
 // Uncomment the following line to enable debugging. You can better control debugging below the following line
-//#define DEBUG
-
+#define DEBUG
+#define DEBUG_ECHO 1 // don not know where this originally was...
 #endif
+
 
 

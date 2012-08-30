@@ -56,7 +56,8 @@ void wait_until_end_of_move() {
     UI_MEDIUM;
   }
 }
-void printPosition() {
+void 
+() {
   out.print_float_P(PSTR("X:"),printer_state.currentPositionSteps[0]*inv_axis_steps_per_unit[0]*(unit_inches?0.03937:1));
   out.print_float_P(PSTR(" Y:"),printer_state.currentPositionSteps[1]*inv_axis_steps_per_unit[1]*(unit_inches?0.03937:1));
   out.print_float_P(PSTR(" Z:"),printer_state.currentPositionSteps[2]*inv_axis_steps_per_unit[2]*(unit_inches?0.03937:1));
@@ -77,7 +78,8 @@ void print_temperatures() {
 void change_feedrate_multiply(int factor) {
   if(factor<25) factor=25;
   if(factor>500) factor=500;
-  printer_state.feedrate *= (float)factor/(float)printer_state.feedrateMultiply;
+  printer_state.feedrate *= (float)factor/(float)printer_state.feed
+  rateMultiply;
   printer_state.feedrateMultiply = factor;
   out.println_int_P(PSTR("SpeedMultiply:"),factor);
 }
