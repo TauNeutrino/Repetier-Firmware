@@ -147,19 +147,20 @@ void home_axis(bool xaxis,bool yaxis,bool zaxis) {
 void process_command(GCode *com)
 {
   unsigned long codenum; //throw away variable
-  static GCode lastCom;
+  static int lastGvalue;
 
   // since CNC gcode generators often only transmit changes in coordinates for moves (GXX) we
-  // have to remember the last G command (hopefully if only X is transmitted only X will move... otherwise I have to
-  // to add to remember the rest too)
+  // have to remember the last G command
+  
   if(!GCODE_HAS_M(com))//only use old GXX if no M code was used
   {
 	  if(!GCODE_HAS_G(com)){
-		  com->G = lastCom.G;
+		  com->G = lastGvalue;
 		  com->params |= 4;
-	  }
+	  }else {
+              lastGvalue=com->G;
+          } 
   }
-
 
 
 
@@ -187,34 +188,39 @@ void process_command(GCode *com)
      	  {
      		  if(com->I == 0 && com->J == 0)  //I && J = always relative circle center -> we do not do infinite small circles
      		  {
-     			  out.print_P(PSTR("Err: Arc /w zero radius!"));
+     			  out.println_P(PSTR("Err: Arc /w zero radius!"));
      			  break;
      		  }
 
-     		  float angleA, angleB, angle, radius, length, aX, aY, bX, bY,diffZ;
-                  float circleStartX, circleStartY, circleStartZ;
+     		  float angleA, angleB, angle, radius, length, aX, aY, bX, bY,diffZ, circleI, circleJ;
+                  float circleStartX, circleStartY, circleStartZ, circleCenterX, circleCenterY;
                   circleStartX = printer_state.currentPositionSteps[0]*inv_axis_steps_per_unit[0]*(unit_inches?0.03937:1);
                   circleStartY = printer_state.currentPositionSteps[1]*inv_axis_steps_per_unit[1]*(unit_inches?0.03937:1);
-                  circleStartZ = printer_state.currentPositi
-                  onSteps[2]*inv_axis_steps_per_unit[2]*(unit_inches?0.03937:1);
+                  circleStartZ = printer_state.currentPositionSteps[2]*inv_axis_steps_per_unit[2]*(unit_inches?0.03937:1);
                   
                   diffZ =  GCODE_HAS_Z(com)?com->Z-circleStartZ:0;
-                  // do some base triangle calcs
-                  aX =     GCODE_HAS_I(com)?-(com->I):0;
-                  aY =     GCODE_HAS_J(com)?-(com->J):0;
-                  bX =     GCODE_HAS_X(com)?(com->X + aX):circleStartX + aX;
-                  bY =     GCODE_HAS_Y(com)?(com->Y + aY):circleStartY + aY;
+                  circleI = GCODE_HAS_I(com)?com->I:0;
+                  circleJ = GCODE_HAS_J(com)?com->J:0;
                   
+                  circleCenterX = circleStartX + circleI;
+                  circleCenterY = circleStartY + circleJ;
+                  
+                  // do some vector Calcs. For the angle we need the vectors relative to the circle origin
+                  aX =     -circleI;
+                  aY =     -circleJ;
+                  bX =     GCODE_HAS_X(com)?(com->X - circleCenterX):-circleI;
+                  bY =     GCODE_HAS_Y(com)?(com->Y - circleCenterY):-circleJ;
+
                   // now calc start and target angle
                   if (com->G == 2) { // Clockwise
                           angleA = atan2(bY, bX);
                           angleB = atan2(aY, aX);
                   }else { // Counterclockwise
-                          angleA = atan2(aY, aX);
+                          angleA = atan2(aY, aX);           
                           angleB = atan2(bY, bX);
                   }
-                  
-                  // Make sure angleB is always greater than angleA
+
+                 // Make sure angleB is always greater than angleA
                   // and if not add 2PI so that it is (this also takes
                   // care of the special case of angleA == angleB,
                   // ie. we want a complete circle)
@@ -223,19 +229,21 @@ void process_command(GCode *com)
                   
                   radius = sqrt(aX * aX + aY * aY); // now I don't have to comment on anythin obvious right? ;) 
                   length = radius * angle;
-                  
+   
+                    
                   // now calculation of how much segments we want to do is done
                   // note that I do not fix the number of segments but get more segments if the radius increases.
                   // so you get rougher for small circles where you can't see the segments anyway and get finer (but also longer) segments with increased radius
                   int circleSegments, s, currentStep;
                   circleSegments = (int) ceil(length/(sqrt(length)/(angle*18/PI))); //this gives good quality circles with all sizes but still restricting segment count
-                  
+  
+                  com->params |= 24; //enable X and Y move if they were not already transmitted
                   for (s = 1; s <= circleSegments; s++) {
                           currentStep = (com->G == 3) ? s : circleSegments - s; // Work backwards for CW
-                          lastCom.X = com->I + radius * cos(angleA + angle * ((float) currentStep / circleSegments));
-                          lastCom.Y = com->J + radius * sin(angleA + angle * ((float) currentStep / circleSegments));
-                          lastCom.Z +=(diffZ/(float)circleSegments);
-                          if(get_coordinates(&lastCom)) // For X Y Z F
+                          com->X = circleCenterX + radius * cos(angleA + angle * ((float) currentStep / circleSegments));
+                          com->Y = circleCenterY + radius * sin(angleA + angle * ((float) currentStep / circleSegments));
+                          com->Z +=(diffZ/(float)circleSegments);
+                            if(get_coordinates(com)) // For X Y Z F
                           queue_move(ALWAYS_CHECK_ENDSTOPS,true);
                   }
           } else {
@@ -710,22 +718,6 @@ void process_command(GCode *com)
       out.println();
   }
 #endif
-
-  if(GCODE_HAS_E(com)) lastCom.E=com->E;
-  if(GCODE_HAS_F(com)) lastCom.F=com->F;
-  if(GCODE_HAS_G(com)) lastCom.G=com->G;
-  if(GCODE_HAS_I(com)) lastCom.I=com->I;
-  if(GCODE_HAS_J(com)) lastCom.J=com->J;
-  if(GCODE_HAS_M(com)) lastCom.M=com->M;
-  if(GCODE_HAS_N(com)) lastCom.N=com->N;
-  if(GCODE_HAS_P(com)) lastCom.P=com->P;
-  if(GCODE_HAS_S(com)) lastCom.S=com->S;
-  if(GCODE_HAS_T(com)) lastCom.T=com->T;
-  if(GCODE_HAS_X(com)) lastCom.X=com->X;
-  if(GCODE_HAS_Y(com)) lastCom.Y=com->Y;
-  if(GCODE_HAS_Z(com)) lastCom.Z=com->Z;
-  if(GCODE_HAS_E(com)) lastCom.params=com->E;
-  strcpy(lastCom.text,com->text);
 
   gcode_command_finished(); // free command cache
 }
