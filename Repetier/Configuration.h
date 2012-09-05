@@ -57,7 +57,7 @@
 /** \brief Number of steps for a 1mm move in y direction  Overridden if EEPROM activated.*/
 #define YAXIS_STEPS_PER_MM 80
 /** \brief Number of steps for a 1mm move in z direction  Overridden if EEPROM activated.*/
-#define ZAXIS_STEPS_PER_MM 3360
+#define ZAXIS_STEPS_PER_MM 3200
 
 // ##########################################################################################
 // ##                           Extruder configuration                                     ##
