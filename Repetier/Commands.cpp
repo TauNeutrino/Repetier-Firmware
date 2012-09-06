@@ -235,8 +235,14 @@ void process_command(GCode *com)
                   // note that I do not fix the number of segments but get more segments if the radius increases.
                   // so you get rougher for small circles where you can't see the segments anyway and get finer (but also longer) segments with increased radius
                   int circleSegments, s, currentStep;
-                  circleSegments = (int) ceil(length/(sqrt(length)/(angle*18/PI))); //this gives good quality circles with all sizes but still restricting segment count
-  
+                  circleSegments = (int) ceil(length/0.5); //with this speeds up to F7000@80stp/mm can be archived regardless the size of the circle
+                  
+                  if( circleSegments<10) //circles below 0.7mm would drop below my subjective minimum so then always a 10 sided poligon is drawn
+                    circleSegments=10;   // and it fits into the buffer
+                  
+                  out.println_int_P(PSTR("Segmentcount: "),circleSegments);
+                  out.println_float_P(PSTR("Segment Length: "),(length/circleSegments));
+                  
                   com->params |= 24; //enable X and Y move if they were not already transmitted
                   for (s = 1; s <= circleSegments; s++) {
                           currentStep = (com->G == 3) ? s : circleSegments - s; // Work backwards for CW

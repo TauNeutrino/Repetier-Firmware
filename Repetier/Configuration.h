@@ -565,7 +565,7 @@ on this endstop.
     The axis order in all axis related arrays is X, Y, Z
      Overridden if EEPROM activated.
     */
-#define MAX_FEEDRATE {15000, 15000, 100}
+#define MAX_FEEDRATE {15000, 15000, 250}
 /** Speed in mm/min for finding the home position.  Overridden if EEPROM activated. */
 #define HOMING_FEEDRATE {2400,2400,100}
 
@@ -660,20 +660,20 @@ the wrong direction change INVERT_X_DIR or INVERT_Y_DIR.
 This number of moves can be cached in advance. If you wan't to cache more, increase this. Especially on
 many very short moves the cache may go empty. The minimum value is 5.
 */
-#define MOVE_CACHE_SIZE 16
+#define MOVE_CACHE_SIZE 32
 /* How many line segments can the path planner use for path optimization. The maximum possible
 value is MOVE_CACHE_SIZE-2. Higher values need more computation time, which can cause blocking for many
 short subsequent moves. If this happens you will see BLK messages in your log and then you now the
 value is to high for your printer settings.
 */
-#define PATH_PLANNER_CHECK_SEGMENTS 12
+#define PATH_PLANNER_CHECK_SEGMENTS 6
 /** \brief Low filled cache size. 
 
 If the cache contains less then MOVE_CACHE_LOW segments, the time per segment is limited to LOW_TICKS_PER_MOVE clock cycles.
 If a move would be shorter, the feedrate will be reduced. This should prevent buffer underflows. Set this to 0 if you
 don't care about empty buffers during print.
 */
-#define MOVE_CACHE_LOW 12
+#define MOVE_CACHE_LOW 0
 /** \brief Cycles per move, if move cache is low. 
 
 This value must be high enough, that the buffer has time to fill up. The problem only occurs at the beginning of a print or
