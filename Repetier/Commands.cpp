@@ -229,16 +229,17 @@ void process_command(GCode *com)
                   
                   radius = sqrt(aX * aX + aY * aY); // now I don't have to comment on anythin obvious right? ;) 
                   length = radius * angle;
-   
+                  float fullCircleRatio;
+                  fullCircleRatio = angle/(2*PI);
                     
                   // now calculation of how much segments we want to do is done
                   // note that I do not fix the number of segments but get more segments if the radius increases.
                   // so you get rougher for small circles where you can't see the segments anyway and get finer segments with increased radius
                   int circleSegments, s, currentStep;
-                  circleSegments = (int) ceil(length/0.5*angle/(2*PI)); //with this speeds up to F7000@80steps/mm can be archived regardless the size of the circle
+                  circleSegments = (int) ceil(length/0.5); //with this speeds up to F7000@80steps/mm can be archived regardless the size of the circle
                   
-                  if( circleSegments<5) //circles below 0.7mm would drop below my subjective minimum so then always a 10 sided poligon is drawn
-                    circleSegments=5;   // and it fits into the buffer
+                  if( circleSegments<10*fullCircleRatio) //full circles below 0.7mm radius would drop below my subjective minimum (10 seg @ full circle) so i switch softly to a constant segment count per angle
+                    circleSegments=ceil(10*fullCircleRatio);   //   = about one segment per 36°
 
                   com->params |= 24; //enable X and Y move if they were not already transmitted
                   for (s = 1; s <= circleSegments; s++) {
