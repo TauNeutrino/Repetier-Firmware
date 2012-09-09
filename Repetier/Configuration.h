@@ -660,7 +660,7 @@ the wrong direction change INVERT_X_DIR or INVERT_Y_DIR.
 This number of moves can be cached in advance. If you wan't to cache more, increase this. Especially on
 many very short moves the cache may go empty. The minimum value is 5.
 */
-#define MOVE_CACHE_SIZE 32
+#define MOVE_CACHE_SIZE 48
 /* How many line segments can the path planner use for path optimization. The maximum possible
 value is MOVE_CACHE_SIZE-2. Higher values need more computation time, which can cause blocking for many
 short subsequent moves. If this happens you will see BLK messages in your log and then you now the
