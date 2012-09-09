@@ -228,17 +228,17 @@
 
 #ifdef RAMPS_V_1_3
 
-#define Y_STEP_PIN         50
-#define Y_DIR_PIN          52
-#define Y_ENABLE_PIN       48
-#define Y_MIN_PIN           3
-#define Y_MAX_PIN          -1   //2 //Max endstops default to disabled "-1", set to commented value to enable.
+#define X_STEP_PIN         50
+#define X_DIR_PIN          52
+#define X_ENABLE_PIN       48
+#define X_MIN_PIN           3
+#define X_MAX_PIN          -1   //2 //Max endstops default to disabled "-1", set to commented value to enable.
 
-#define X_STEP_PIN         44
-#define X_DIR_PIN          46
-#define X_ENABLE_PIN       42
-#define X_MIN_PIN          14
-#define X_MAX_PIN          -1   //15
+#define Y_STEP_PIN         44
+#define Y_DIR_PIN          46
+#define Y_ENABLE_PIN       42
+#define Y_MIN_PIN          14
+#define Y_MAX_PIN          -1   //15
 
 #define Z_STEP_PIN         38
 #define Z_DIR_PIN          40
@@ -271,17 +271,17 @@
 
 #else // RAMPS_V_1_1 or RAMPS_V_1_2 as default
 
-#define X_STEP_PIN         50
-#define X_DIR_PIN          52
-#define X_ENABLE_PIN       48
-#define X_MIN_PIN           3
-#define X_MAX_PIN          -1   //2 //Max endstops default to disabled "-1", set to commented value to enable.
+#define Y_STEP_PIN         50
+#define Y_DIR_PIN          52
+#define Y_ENABLE_PIN       48
+#define Y_MIN_PIN           3
+#define Y_MAX_PIN          -1   //2 //Max endstops default to disabled "-1", set to commented value to enable.
 
-#define Y_STEP_PIN         44
-#define Y_DIR_PIN          46
-#define Y_ENABLE_PIN       42
-#define Y_MIN_PIN          14
-#define Y_MAX_PIN          -1   //15
+#define X_STEP_PIN         44
+#define X_DIR_PIN          46
+#define X_ENABLE_PIN       42
+#define X_MIN_PIN          14
+#define X_MAX_PIN          -1   //15
 
 #define Z_STEP_PIN         38
 #define Z_DIR_PIN          40
