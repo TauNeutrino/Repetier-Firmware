@@ -84,7 +84,7 @@
 // 99 Generic thermistor table
 // 100 is AD595
 // 101 is MAX6675
-#define EXT0_TEMPSENSOR_TYPE 1
+#define EXT0_TEMPSENSOR_TYPE 3
 // Position in analog input table below for reading temperatures or pin enabling SS for MAX6675
 #define EXT0_TEMPSENSOR_PIN 0
 // WHich pin enables the heater

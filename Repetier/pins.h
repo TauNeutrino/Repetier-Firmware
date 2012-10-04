@@ -246,9 +246,9 @@
 #define Z_MIN_PIN          18
 #define Z_MAX_PIN          -1   //19
 
-#define E_STEP_PIN         21
-#define E_DIR_PIN          21
-#define E_ENABLE_PIN       21
+#define E_STEP_PIN         32
+#define E_DIR_PIN          34
+#define E_ENABLE_PIN       30
 
 #define E_1_STEP_PIN         31
 #define E_1_DIR_PIN          31
